@@ -10,7 +10,10 @@ const Nav = () => {
     const navigate = useNavigate();
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
-    const [userData, setUserData] = useState({});
+
+    const initialUserData = localStorage.getItem('userData') ? 
+        JSON.parse(localStorage.getItem('userData')) : {}
+    const [userData, setUserData] = useState(initialUserData);
 
     useEffect(()=>{
         onAuthStateChanged(auth, (user)=>{
@@ -49,6 +52,7 @@ const Nav = () => {
         signInWithPopup(auth, provider)
         .then((result)=>{
             setUserData(result.user);
+            localStorage.setItem("userData", JSON.stringify(result.user));
         })
         .catch((error)=>{
             alert(error.message);
