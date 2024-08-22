@@ -27,14 +27,12 @@ const SearchPage = () => {
     try{
       const response = await axios.get(`/search/multi?include_adult=false&query=${searchTerm}`)
       setSearchResults(response.data.results);
-      console.log(searchResults);
     } catch (error) {
       console.log(error);
     }
   }
 
   if(searchResults.length > 0){
-    console.log(searchResults)
     return(
       <section className='search-container'>
         {searchResults.map((movie) => {
