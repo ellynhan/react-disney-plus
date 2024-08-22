@@ -1,12 +1,29 @@
 import React, { useState, useEffect} from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from 'firebase/auth';
 
 const Nav = () => {
     const [show, setShow] = useState(false);
     const {pathname} = useLocation();
     const [searchValue, setSearchValue] = useState("");
     const navigate = useNavigate();
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+
+    useEffect(()=>{
+        onAuthStateChanged(auth, (user)=>{
+            if(user){
+                if(pathname==='/'){
+                    navigate("/main")
+                }
+            }else{
+                navigate("/")
+            }
+        })
+    },[])
+
+
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll)
@@ -28,16 +45,27 @@ const Nav = () => {
         navigate(`/search?q=${e.target.value}`)
     }
 
+    const handleAuth = () => {
+        signInWithPopup(auth, provider)
+        .then((result)=>{
+
+        })
+        .catch((error)=>{
+            alert(error.message);
+        })
+    }
+
     return ( 
         <NavWrapper show={show}>
             <Logo>
                 <img
-                alt="Disney Plus logo"
-                src="/images/logo.svg"
-                onClick={()=>(window.location.ref="/")}
+                    alt="Disney Plus logo"
+                    src="/images/logo.svg"
+                    onClick={()=>(window.location.ref="/")}
                 />
             </Logo>
-            {pathname ===  "/" ? (<Login>Login</Login>) : 
+            
+            {pathname ===  "/" ? (<Login onClick={handleAuth}>Login</Login>) : 
             <Input
                 value={searchValue}
                 onChange={handleChange}
